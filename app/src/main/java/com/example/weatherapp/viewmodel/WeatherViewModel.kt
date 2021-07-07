@@ -14,25 +14,18 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel
 @Inject
-constructor(private val repository: WeatherRepository) : ViewModel() {
+constructor(private val repository: WeatherRepository, private val location: String = "istanbul") : ViewModel() {
 
     private val _response = MutableLiveData<WeatherData>()
     val weatherResponse: LiveData<WeatherData>
         get() = _response
 
     init {
-        getWeather()
+        getWeather(location)
     }
 
-    private fun getWeather() = viewModelScope.launch {
-        repository.getWeather().let { response ->
-
-            if (response.isSuccessful) {
-                _response.postValue(response.body())
-            } else {
-                Log.d("Tag", "getWeather Error Response: ${response.errorBody()}")
-            }
-        }
+    fun getWeather(location: String) = viewModelScope.launch {
+        repository.getWeather(location)
     }
 
 }
